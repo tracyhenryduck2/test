@@ -1792,7 +1792,7 @@ var ZYFILE = {
 				var newStr = file.name.split("").reverse().join("");
 				var type = newStr.split(".")[0].split("").reverse().join("");
 				// 处理不同类型文件代表的图标
-				var fileImgSrc = "zyupload/skins/images/fileType/";
+				var fileImgSrc = "../zyupload/skins/images/fileType/";
 				if(type == "rar"){
 					fileImgSrc = fileImgSrc + "rar.png";
 				}else if(type == "zip"){
