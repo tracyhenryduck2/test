@@ -115,6 +115,7 @@ String path = request.getContextPath();
    				
 				// 初始化插件
 				//"js","exe","txt","xls","rar","zip","ppt","pdf","psd" 文件种类
+				$("#no-ie").css("display","none");
 				$("#file").css("display","none");
 				$("#zyupload").zyUpload({
 					width            :   "650px",                 // 宽度
@@ -129,6 +130,11 @@ String path = request.getContextPath();
 					tailor           :   false,                   // 是否可以裁剪图片
 					del              :   true,                    // 是否可以删除文件
 					finishDel        :   false,  				  // 是否在上传文件完成后删除预览
+					max              :   1,
+
+        <s:if test="#request.oper==1">
+                     first           :   [{name:"/supermarket_images/market/${marketBean.headPic }",type:"image/jpeg"}],</s:if>  
+					 // first            :   "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1515734134110&di=26d22186391706a2a5ff397d538d2851&imgtype=0&src=http%3A%2F%2Fpic4.nipic.com%2F20091217%2F3885730_124701000519_2.jpg",
 					/* 外部获得的回调接口 */
 					onSelect: function(selectFiles, allFiles){    // 选择文件的回调方法  selectFile:当前选中的文件  allFiles:还没上传的全部文件
 						console.log("当前选择了以下文件：");
@@ -140,7 +146,6 @@ String path = request.getContextPath();
 					},
 					onSuccess: function(file, response){          // 文件上传成功的回调方法
 						Dialog.alert("上传成功！");
-					$("#pic").html("<img src='/supermarket_images/market/"+response+"' style='width:100px;height:100px;'/>");
 					$("#fileUrl").val(response);
 						// console.info("此文件上传成功：");
 						// console.info(file.name);
@@ -155,6 +160,9 @@ String path = request.getContextPath();
 					onComplete: function(response){           	  // 上传完成的回调方法
 						console.log("文件上传完成");
 						console.log(response);
+					},
+					onBeyondMax:function(max){
+						Dialog.alert("文件只能上传"+max+"张！");
 					}
 				});
 				
@@ -233,7 +241,7 @@ String path = request.getContextPath();
   		<td align="right">上传简介图片</td>                                     
     	<td><div id="zyupload" class="zyupload"></div><input type="file" name="file" id="file" /><br/>建议图片大小200*200</td>                     
   </tr>  
-  <tr>                                    
+  <tr id= "no-ie">                                    
     	<td align="right">预览简介图片</td>   
     	<td>
     	<div id="pic">

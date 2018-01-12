@@ -1388,6 +1388,7 @@ var ZYFILE = {
 	lastUploadFile : [],          // 上一次选择的文件数组，方便继续上传使用
 	perUploadFile : [],           // 存放永久的文件数组，方便删除使用
 	fileNum : 0,                  // 代表文件总个数，因为涉及到继续添加，所以下一次添加需要在它的基础上添加索引
+	maxNum  : null,               // 
 	/* 提供给外部的接口 */
 	filterFile : function(files){ // 提供给外部的过滤文件格式等的接口，外部需要把过滤后的文件返回
 		return files;
@@ -1410,6 +1411,9 @@ var ZYFILE = {
 	onComplete : function(responseInfo){         // 提供给外部获取全部文件上传完成，供外部实现完成效果
 		
 	},
+	onBeyondMax:function(max){                      //超过最大文件数时提示不能上传
+
+	},
 	
 	/* 内部实现功能方法 */
 	// 获得选中的文件
@@ -1422,6 +1426,7 @@ var ZYFILE = {
 	},
 	// 获取文件
 	funGetFiles : function(e){  
+
 		var self = this;
 		// 取消鼠标经过样式
 		this.funDragHover(e);
@@ -1558,9 +1563,9 @@ var ZYFILE = {
 	},
 	
 	// 初始化
-	init : function(){  // 初始化方法，在此给选择、上传按钮绑定事件
+	init : function(file,max){  // 初始化方法，在此给选择、上传按钮绑定事件
 		var self = this;  // 克隆一个自身
-		
+		self.maxNum = max;
 		if (this.dragDrop) {
 			this.dragDrop.addEventListener("dragover", function(e) { self.funDragHover(e); }, false);
 			this.dragDrop.addEventListener("dragleave", function(e) { self.funDragHover(e); }, false);
@@ -1570,8 +1575,19 @@ var ZYFILE = {
 		// 如果选择按钮存在
 		if(self.fileInput){
 			// 绑定change事件
+
 			this.fileInput.addEventListener("change", function(e) {
-				self.funGetFiles(e); 
+
+                if(self.maxNum==null){
+                     self.funGetFiles(e); 
+                }else{
+                	if(self.uploadFile.length >= self.maxNum){
+                		self.onBeyondMax(self.maxNum);
+                	}else{
+                		self.funGetFiles(e);
+                	}
+                }
+				       console.log(self.maxNum);
 			}, false);	
 		}
 		
@@ -1582,6 +1598,26 @@ var ZYFILE = {
 				self.funUploadFiles(e); 
 			}, false);	
 		}
+
+this.uploadFile = file;
+
+		$.each(this.uploadFile, function(k, v){
+			// 因为涉及到继续添加，所以下一次添加需要在总个数的基础上添加
+			v.index = self.fileNum;
+			// 添加一个之后自增
+			self.fileNum++;
+		});
+		// 先把当前选中的文件保存备份
+		var selectFile = this.uploadFile;  
+		// 要把全部的文件都保存下来，因为删除所使用的下标是全局的变量
+		this.perUploadFile = this.perUploadFile.concat(this.uploadFile);
+		// 合并下上传的文件
+		this.uploadFile = this.lastUploadFile.concat(this.uploadFile);
+		
+		// 执行选择回调
+		this.onSelect(selectFile, this.uploadFile);
+
+
 	}
 };
 
@@ -1621,12 +1657,17 @@ var ZYFILE = {
 					tailor           : false,  						      // 是否可以截取图片
 					del              : true,  						      // 是否可以删除文件
 					finishDel        : false,  						      // 是否在上传文件完成后删除预览
+					first            : [],                                // 初始的网络图片
+					max              : null,                              // 文件上传上限
 					/* 提供给外部的接口方法 */
 					onSelect         : function(selectFiles, allFiles){}, // 选择文件的回调方法  selectFile:当前选中的文件  allFiles:还没上传的全部文件
 					onDelete		 : function(file, files){},           // 删除一个文件的回调方法 file:当前删除的文件  files:删除之后的文件
 					onSuccess		 : function(file, response){},        // 文件上传成功的回调方法
 					onFailure		 : function(file, response){},        // 文件上传失败的回调方法
-					onComplete		 : function(response){}               // 上传完成的回调方法
+					onComplete		 : function(response){},               // 上传完成的回调方法
+					onBeyondMax      : function (max) {
+			
+					}
 			};
 			
 			para = $.extend(defaults,options);
@@ -1792,7 +1833,7 @@ var ZYFILE = {
 				var newStr = file.name.split("").reverse().join("");
 				var type = newStr.split(".")[0].split("").reverse().join("");
 				// 处理不同类型文件代表的图标
-				var fileImgSrc = "../zyupload/skins/images/fileType/";
+				var fileImgSrc = "zyupload/skins/images/fileType/";
 				if(type == "rar"){
 					fileImgSrc = fileImgSrc + "rar.png";
 				}else if(type == "zip"){
@@ -1828,7 +1869,7 @@ var ZYFILE = {
 					html += '	</div>';
 					html += '	<a style="height:'+para.itemHeight+';width:'+para.itemWidth+';" href="#" class="imgBox">';
 					html += '		<div class="uploadImg" style="width:'+imgWidth+'px;max-width:'+imgWidth+'px;max-height:'+imgHeight+'px;">';				
-					html += '			<img id="uploadImage_'+file.index+'" class="upload_image" src="' + e.target.result + '" style="width:expression(this.width > '+imgWidth+' ? '+imgWidth+'px : this.width);" />';                                                                 
+					html += '			<img id="uploadImage_'+file.index+'" class="upload_image" src="' +(file.lastModified==null?file.name:e.target.result) + '" style="width:expression(this.width > '+imgWidth+' ? '+imgWidth+'px : this.width);" />';                                                                 
 					html += '		</div>';
 					html += '	</a>';
 					html += '	<p id="uploadProgress_'+file.index+'" class="file_progress"></p>';
@@ -1928,7 +1969,14 @@ var ZYFILE = {
 						var funDealtPreviewHtml = function() {
 							file = selectFiles[i];
 							if (file) {
-								var reader = new FileReader();
+                               if(file.lastModified==null){
+									html += self.funDisposePreviewHtml(file);
+									
+									i++;
+									// 再接着调用此方法递归组成可以预览的html
+									funDealtPreviewHtml();
+                               }else{
+                               	var reader = new FileReader();
 								reader.onload = function(e) {
 									// 处理下配置参数和格式的html
 									html += self.funDisposePreviewHtml(file, e);
@@ -1937,7 +1985,10 @@ var ZYFILE = {
 									// 再接着调用此方法递归组成可以预览的html
 									funDealtPreviewHtml();
 								}
-								reader.readAsDataURL(file);
+									reader.readAsDataURL(file);
+                               }
+
+							
 							} else {
 								// 走到这里说明文件html已经组织完毕，要把html添加到预览区
 								funAppendPreviewHtml(html);
@@ -2020,7 +2071,6 @@ var ZYFILE = {
 						$("#uploadList_" + file.index).fadeOut();
 						// 重新设置统计栏信息
 						self.funSetStatusInfo(files);
-						console.info("剩下的文件");
 						console.info(files);
 					},
 					onProgress: function(file, loaded, total) {
@@ -2065,12 +2115,15 @@ var ZYFILE = {
 					},
 					onDragLeave: function() {
 						$(this).removeClass("upload_drag_hover");
+					},
+					onBeyondMax:function(max){
+						para.onBeyondMax(max);
 					}
 
 				};
 				
 				ZYFILE = $.extend(ZYFILE, params);
-				ZYFILE.init();
+				ZYFILE.init(para.first,para.max);
 			};
 			
 			/**
