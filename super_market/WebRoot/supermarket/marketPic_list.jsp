@@ -15,21 +15,21 @@ String path = request.getContextPath();
 	<meta http-equiv="description" content="This is my page">    
 	<script type="text/javascript">    
 		function add(){      
-			Dialog.open({Title:"新增", Width:600, Height:360, URL:"<%=path%>/supermarket/MarketPic!toAddMarketPic.action?marketPicBean.marketId=${marketPicBean.marketId}"});   
+			Dialog.open({Title:"新增", Width:1000, Height:460, URL:"<%=path%>/supermarket/MarketPic!toAddMarketPic.action?marketPicBean.marketId=${marketPicBean.marketId}"});   
 		}      
 		function mod(){      
 			var id = getCheckRowValue();     
 			if(id==null) {     
 				return;   
 			}    
-			Dialog.open({Title:"编辑", Width:600, Height:360, URL:"<%=path%>/supermarket/MarketPic!toAddMarketPic.action?oper=1&marketPicBean.id="+id});
+			Dialog.open({Title:"编辑", Width:1000, Height:460, URL:"<%=path%>/supermarket/MarketPic!toAddMarketPic.action?oper=1&marketPicBean.id="+id});
 		}      
 		function detail(){   
 			var id = getCheckRowValue();     
 			if(id==null) {     
 				return;   
 			}    
-			Dialog.open({Title:"详情", Width:500, Height:360, URL:"<%=path%>/supermarket/MarketPic!toAddMarketPic.action?read=1&oper=1&marketPicBean.id="+id});    
+			Dialog.open({Title:"详情", Width:1000, Height:460, URL:"<%=path%>/supermarket/MarketPic!toAddMarketPic.action?read=1&oper=1&marketPicBean.id="+id});    
 		}      
 		function del(){      
 			if(!isCheckAny("idArr")){      

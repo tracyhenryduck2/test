@@ -6,7 +6,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>                                   
-<title></title>         
+<title></title> 
+	<link rel="stylesheet" href="<%=path %>/zyupload/skins/zyupload-1.0.0.css " type="text/css">
+	<script type="text/javascript" src="<%=path %>/zyupload/zyupload-1.0.0.js"></script>           
 <script type="text/javascript">        
 	function save(){   
 		if($("#filename").val()==null || $.trim($("#filename").val())=="") {
@@ -49,6 +51,8 @@
 			}                                   
 		});
 		setTimeout(function(){
+   if(myBrowser()=="IE"){
+   			$("#zyupload").css("display","none");
 			$('#file').uploadify({
 				'fileObjName':'file',
 				'buttonText':'选择文件',
@@ -63,6 +67,62 @@
 					$("#filename").val(data);
 			    }
 			});
+         }else{
+               				// 初始化插件
+				//"js","exe","txt","xls","rar","zip","ppt","pdf","psd" 文件种类
+				$("#no-ie").css("display","none");
+				$("#file").css("display","none");
+				$("#zyupload").zyUpload({
+					width            :   "650px",                 // 宽度
+					height           :   "200px",                 // 宽度
+					itemWidth        :   "140px",                 // 文件项的宽度
+					itemHeight       :   "115px",                 // 文件项的高度
+					url              :   "<%=request.getContextPath()%>/supermarket/Banner!importFile.action",  // 上传文件的路径
+					fileType         :   ["jpg","png"],// 上传文件的类型
+					fileSize         :   51200000,                // 上传文件的大小
+					multiple         :   false,                    // 是否可以多个文件上传
+					dragDrop         :   false,                   // 是否可以拖动上传文件
+					tailor           :   false,                   // 是否可以裁剪图片
+					del              :   true,                    // 是否可以删除文件
+					finishDel        :   false,  				  // 是否在上传文件完成后删除预览
+					max              :   1,
+
+        <s:if test="#request.oper==1">
+                     first           :   [{name:"/supermarket_images/banner/${bannerBean.filename }",type:"image/jpeg"}],</s:if>  
+					 // first            :   "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1515734134110&di=26d22186391706a2a5ff397d538d2851&imgtype=0&src=http%3A%2F%2Fpic4.nipic.com%2F20091217%2F3885730_124701000519_2.jpg",
+					/* 外部获得的回调接口 */
+					onSelect: function(selectFiles, allFiles){    // 选择文件的回调方法  selectFile:当前选中的文件  allFiles:还没上传的全部文件
+						console.log("当前选择了以下文件：");
+						console.log(selectFiles);
+					},
+					onDelete: function(file, files){              // 删除一个文件的回调方法 file:当前删除的文件  files:删除之后的文件
+						console.log("当前删除了此文件：");
+						console.log(file.name);
+					},
+					onSuccess: function(file, response){          // 文件上传成功的回调方法
+						Dialog.alert("上传成功！");
+					$("#filename").val(response);
+						// console.info("此文件上传成功：");
+						// console.info(file.name);
+						// console.info("此文件上传到服务器地址：");
+						// console.info(response);
+						// $("#uploadInf").append("<p>上传成功，文件地址是：" + response + "</p>");
+					},
+					onFailure: function(file, response){          // 文件上传失败的回调方法
+						console.log("此文件上传失败：");
+						console.log(file.name);
+					},
+					onComplete: function(response){           	  // 上传完成的回调方法
+						console.log("文件上传完成");
+						console.log(response);
+					},
+					onBeyondMax:function(max){
+						Dialog.alert("文件只能上传"+max+"张！");
+					}
+				}); 
+         }
+
+
 		},10);
 		
 	});                                     
@@ -103,9 +163,9 @@
 <table cellpadding="0" cellspacing="0" width="100%" class="GF-grid"> 
   <tr id="upload_pic" >
   		<td align="right"  width="20%" >上传图片</td>                                 
-    	<td><input type="file" name="file" id="file" /></td>                     
+    	<td><div id="zyupload" class="zyupload"></div><input type="file" name="file" id="file" /></td>                     
   </tr>  
-  <tr> 
+  <tr id= "no-ie"> 
   		<td align="right"  height="120" style="height:120px;">图片预览</td>                                     
     	<td valign="bottom">
     	<div id="pic">

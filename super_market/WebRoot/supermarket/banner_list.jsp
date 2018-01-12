@@ -15,21 +15,21 @@ String path = request.getContextPath();
 	<meta http-equiv="description" content="This is my page">    
 	<script type="text/javascript">    
 		function add(){      
-			Dialog.open({Title:"新增", Width:600, Height:360, URL:"<%=path%>/supermarket/Banner!toAddBanner.action"});   
+			Dialog.open({Title:"新增", Width:1000, Height:460, URL:"<%=path%>/supermarket/Banner!toAddBanner.action"});   
 		}      
 		function mod(){      
 			var id = getCheckRowValue();     
 			if(id==null) {     
 				return;   
 			}    
-			Dialog.open({Title:"编辑", Width:600, Height:360, URL:"<%=path%>/supermarket/Banner!toAddBanner.action?oper=1&bannerBean.id="+id});
+			Dialog.open({Title:"编辑", Width:1000, Height:460, URL:"<%=path%>/supermarket/Banner!toAddBanner.action?oper=1&bannerBean.id="+id});
 		}      
 		function detail(){   
 			var id = getCheckRowValue();     
 			if(id==null) {     
 				return;   
 			}    
-			Dialog.open({Title:"详情", Width:500, Height:360, URL:"<%=path%>/supermarket/Banner!toAddBanner.action?read=1&oper=1&bannerBean.id="+id});    
+			Dialog.open({Title:"详情", Width:1000, Height:460, URL:"<%=path%>/supermarket/Banner!toAddBanner.action?read=1&oper=1&bannerBean.id="+id});    
 		}      
 		function del(){      
 			if(!isCheckAny("idArr")){      
