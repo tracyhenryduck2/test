@@ -109,6 +109,21 @@ String path = request.getContextPath();
 					onDelete: function(file, files){              // 删除一个文件的回调方法 file:当前删除的文件  files:删除之后的文件
 						console.log("当前删除了此文件：");
 						console.log(file.name);
+						$.ajax({
+						 type :"post",
+						 url : '<%=request.getContextPath()%>/supermarket/MarketPic!removeFile.action',
+								data : {
+									"fileName" :   (file.name.lastIndexOf("/")!=-1?file.name.substring(file.name.lastIndexOf("/")):file.name)
+								},
+								success : function(data) {
+									if (data) {
+										$("#picUrl").val("");
+										Dialog.alert("删除成功！");
+									} else {
+										Dialog.alert("删除失败！");
+									}
+								}
+							});
 					},
 					onSuccess: function(file, response){          // 文件上传成功的回调方法
 						Dialog.alert("上传成功！");
