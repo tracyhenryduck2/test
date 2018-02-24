@@ -51,8 +51,8 @@ function init() {
 		var i=2;
 		for(;i<16;i++)
 		{
-				if(document.getElementById("submenu" + i)!=null)
-				document.getElementById("submenu" + i).style.display="none";
+ 			// 	if(document.getElementById("submenu" + i)!=null)
+				// document.getElementById("submenu" + i).style.display="none"; 
 				if(document.getElementById("imgmenu" + i)!=null)
 				document.getElementById("imgmenu" + i).background="<%=path%>/images/style/leftmenubg.png";
 		}
@@ -146,7 +146,7 @@ table{border-collapse:collapse;border-spacing:0;}
 						        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
 						          <tr>
 						            <td height="23" background="<%=path%>/images/style/leftmenubg.png" id="imgmenu${group.group_id}"
-						             class="menu_title"  onClick="showsubmenu(${group.group_id})" 
+						             class="menu_title"  
 						             style="cursor:hand"><table width="100%" border="0" cellspacing="0" cellpadding="0">
 						              <tr>
 						                <td class="STYLE2" align="center" >${group.group_name}</td>
